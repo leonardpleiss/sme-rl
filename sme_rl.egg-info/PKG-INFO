@@ -1,0 +1,143 @@
+Metadata-Version: 2.4
+Name: sme_rl
+Version: 0.1.0
+Summary: Synthetic monitoring environments for reinforcement learning
+Author-email: Leonard Pleiss <leonard.pleiss@tum.de>
+License: MIT
+Project-URL: Homepage, https://arxiv.org/abs/2603.06252
+Project-URL: Source, https://github.com/leonardpleiss/sme-rl
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: gymnasium>=0.28.0
+Requires-Dist: numpy<2.0.0
+Requires-Dist: torch
+Requires-Dist: stable-baselines3
+Requires-Dist: tqdm
+
+# SME-RL: Synthetic Monitoring Environments for Reinforcement Learning
+
+[![PyPI version](https://badge.fury.io/py/sme-rl.svg)](https://badge.fury.io/py/sme-rl)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Paper](https://img.shields.io/badge/arXiv-2603.06252-b31b1b.svg)](https://arxiv.org/abs/2603.06252)
+
+<div align="center">
+  <!-- 🖼️ PLACEHOLDER FOR YOUR FIGURE -->
+  <img src="docs/assets/eval.png" alt="SME-RL" width="600"/>
+  <p><i>Figure 1: Evaluation performance during training (column 1) and final within-distribution and out-of-distribution performance for PPO, SAC and TD3 across different complexities of the optimal policy the agent seeks to mirror (C_pi*, columns 2-4). Performance is defined as the complement of the mean average error between action and optimal action. States within $\mathbb{R}^2(0,1)$ are within-distribution. States beyond the unit square are out-of-distribution. SD = State Dimension.</i></p>
+</div>
+
+**SME-RL** provides highly configurable Synthetic Monitoring Environments for evaluating Deep Reinforcement Learning algorithms. Designed for rapid prototyping, sanity checking, and fundamental RL research, SME integrates natively with the [Gymnasium](https://gymnasium.farama.org/) API.
+
+# Installation
+
+You can install the package directly from PyPI:
+
+```bash
+pip install sme-rl
+```
+Note: SME-RL supports Python 3.8+ and relies on PyTorch and Gymnasium.
+
+# Quick Start
+SME-RL is registered as a standard Gymnasium environment. You can initialize it using gymnasium.make() and immediately use it with standard RL libraries like Stable-Baselines3.
+
+```Python
+import gymnasium
+import sme_rl # Registers the environment
+from stable_baselines3 import PPO
+
+# 1. Initialize the environment
+env = gymnasium.make(
+    "SME-v0",
+    n_state_channels=8,
+    n_action_channels=4,
+    episode_length=100
+)
+
+# 2. Train an agent
+model = PPO("MlpPolicy", env, verbose=1)
+model.learn(total_timesteps=100_000)
+
+# 3. Evaluate your agent
+env.eval(model)
+```
+
+#  Configuration Parameters
+You can heavily customize the complexity and rules of the environment during instantiation:
+
+| Parameter | Symbol | Type | Default | Description |
+|---|---|---|---|---|
+| `n_state_channels` | N_s | int | Required | Dimensionality of the state space. |
+| `n_action_channels` | N_a | int | Required | Dimensionality of the action space. |
+| `episode_length` | — | int | 100 | Maximum steps per episode before truncation. |
+| `reward_every` | k | int | 1 | Step interval for reward distribution. |
+| `min_reward` | r_min | float | 0.0 | Minimum threshold for a step reward to be registered. |
+| `kill_threshold` | D | float | 0.0 | Reward threshold below which the episode terminates early (survival difficulty). |
+| `policy_complexity` | C_pi* | int | 1 | Depth of the optimal policy network. |
+| `seed` | — | int | 1 | Global seed for procedural generation and reproducibility. |
+
+# Within- and Out-of-Distribution Evaluation
+
+`SME-RL` features a built-in evaluation framework to benchmark your trained agent's generalization capabilities. By using the `.eval()` method, you can probe the policy across both within-distribution (WD) states (typically bounded between 0 and 1) and wide out-of-distribution (OOD) states.
+
+The evaluation computes the mean absolute error between your agent's choices and the ground-truth optimal policy network, mapping performance to a normalized reward score.
+
+### Usage Example
+
+```python
+# After training your model (e.g., using Stable-Baselines3)
+states, opt_actions, model_actions, rewards = env.eval(
+    model=model,
+    storepath="results/eval_run",   # Saves data as an .npz archive
+    channel_min=-1.0,               # Lower bound for OOD exploration
+    channel_max=2.0,                # Upper bound for OOD exploration
+    probes=10000,                   # Number of evaluation sample points
+    wd_weight=0.5                   # 50% within-distribution, 50% out-of-distribution
+)
+
+print(f"Evaluated {len(states)} states.")
+print(f"Mean evaluation score: {rewards.mean():.4f}")
+````
+
+### Evaluation Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `model` | `object` | Required | The trained RL agent (expects a `.predict()` interface compatible with SB3). |
+| `storepath` | `str / Path` | `None` | Filepath directory where evaluation metrics are written out as a compressed `.npz` file. |
+| `channel_min` | `float` | `0.0` | Minimum bounds for sampling evaluation state channels. Limits below 0 test OOD behavior. |
+| `channel_max` | `float` | `1.0` | Maximum bounds for sampling evaluation state channels. Limits above 1 test OOD behavior. |
+| `probes` | `int` | `10000` | The total number of evaluation samples generated. |
+| `wd_weight` | `float` | `0.5` | Ratio of within-distribution samples (`[0, 1]`) relative to wide distribution samples. |
+
+### Returned Outputs
+
+The evaluation function returns a tuple of four arrays:
+
+| Output | Description |
+|---|---|
+| `states` | The sampled synthetic verification states. |
+| `opt_a` | Target action tensors generated by the ground-truth optimal policy structure. |
+| `a` | Action predictions selected by your trained model. |
+| `raw_reward` | Normalized scores scaled between `0.0` and `1.0` indicating how tightly your model mirrors optimal actions. |
+
+evaluation metrics are written out as a compressed `.npz` file if the `storepath` parameter in the `eval()` method is specified.
+## 📖 Citation
+If you use this environment in your research, please cite our paper:
+
+```Code-Snippet
+@misc{pleiss2026smerl,
+      title={Synthetic Monitoring Environments for Reinforcement Learning}, 
+      author={Leonard Pleiss},
+      year={2026},
+      eprint={2603.06252},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+````
+##  License
+This project is licensed under the MIT License.

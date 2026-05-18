@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: sme
+Version: 0.1.0
+Summary: Synthetic monitoring environments for reinforcement learning
+Author-email: Leonard Pleiss <leonard.pleiss@tum.de>
+License: MIT
+Project-URL: Homepage, https://arxiv.org/abs/2603.06252
+Project-URL: Source, https://github.com/yourusername/sme-env
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: gymnasium>=0.28.0
+Requires-Dist: numpy
+Requires-Dist: torch
+Requires-Dist: stable-baselines3
+Requires-Dist: tqdm

@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+sme/__init__.py
+sme/sme.py
+sme/utils.py
+sme.egg-info/PKG-INFO
+sme.egg-info/SOURCES.txt
+sme.egg-info/dependency_links.txt
+sme.egg-info/requires.txt
+sme.egg-info/top_level.txt

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sme_rl"
+version = "0.1.0"
+description = "Synthetic monitoring environments for reinforcement learning"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"} # Or Apache 2.0, GPL, etc.
+authors = [
+  {name = "Leonard Pleiss", email = "leonard.pleiss@tum.de"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence"
+]
+dependencies = [
+    "gymnasium>=0.28.0",
+    "numpy<2.0.0",
+    "torch",
+    "stable-baselines3",
+    "tqdm"
+]
+
+[project.urls]
+"Homepage" = "https://arxiv.org/abs/2603.06252"
+"Source" = "https://github.com/leonardpleiss/sme-rl"
+
+[tool.setuptools.packages.find]
+include = ["sme_rl", "sme_rl.*"]

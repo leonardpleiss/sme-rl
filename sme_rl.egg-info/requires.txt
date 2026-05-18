@@ -1,0 +1,5 @@
+gymnasium>=0.28.0
+numpy<2.0.0
+torch
+stable-baselines3
+tqdm
