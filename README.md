@@ -25,24 +25,22 @@ Note: SME-RL supports Python 3.8+ and relies on PyTorch and Gymnasium.
 SME-RL is registered as a standard Gymnasium environment. You can initialize it using gymnasium.make() and immediately use it with standard RL libraries like Stable-Baselines3.
 
 ```Python
-import gymnasium
-import sme_rl # Registers the environment
 from stable_baselines3 import PPO
+from sme_rl.sme import SME
 
-# 1. Initialize the environment
-env = gymnasium.make(
-    "SME-v0",
+env = SME(
     n_state_channels=8,
     n_action_channels=4,
-    episode_length=100
+    episode_length=100,
+    reward_every=1,
+    min_reward=0.,
+    kill_threshold=0.,
+    policy_complexity=1,
 )
 
-# 2. Train an agent
-model = PPO("MlpPolicy", env, verbose=1)
-model.learn(total_timesteps=100_000)
-
-# 3. Evaluate your agent
-env.eval(model)
+model = PPO("MlpPolicy", env, verbose=0)
+ 
+model.learn(total_timesteps=1_000_000, progress_bar=True)
 ```
 
 #  Configuration Parameters
