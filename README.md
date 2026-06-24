@@ -7,7 +7,7 @@
 <div align="center">
   <!-- 🖼️ PLACEHOLDER FOR YOUR FIGURE -->
   <img src="docs/assets/sme.gif" alt="SME-RL" width="600"/>
-  <p><i>*Figure 1: Trajectory and Reward Dynamics in a 2D Synthetic Monitoring Environment (SME).* This animation contrasts an agent's trajectory (black traces) against the optimal policy (green trace) within a $2$-dimensional SME. *State Space (Center)*: The SME uses a triangle wave transition function to map linear action shifts into continuous, elastic wall reflections, guaranteeing a uniform state distribution. The red dot marks the current state, while fading traces show historical phase-space exploration. *Configuration & Actions (Left)*: Details the static environment parameters (top) and the exact multidimensional action vectors chosen at each step (bottom). *Metrics (Right)*: Performance is based on the Mean Absolute Difference (MAD) between the agent's and optimal actions. The agent earns a Step Reward only when 1 - MAD exceeds the red threshold line ($0.75$). Rewards gather internally as Cum. Reward and are distributed to the Return stack every reward_every steps.</i></p>
+  <p><i><b>Figure 1: Trajectory and Reward Dynamics in a 2D Synthetic Monitoring Environment (SME).</b> This animation contrasts an agent's trajectory (black traces) against the optimal policy (green trace) within a $2$-dimensional SME. <b>State Space (Center)</b>: The SME uses a triangle wave transition function to map linear action shifts into continuous, elastic wall reflections, guaranteeing a uniform state distribution. <b>Configuration & Actions (Left)</b>: Details the static environment parameters (top) and the exact multidimensional action vectors chosen at each step (bottom). <b>Metrics (Right)</b>: Performance is based on the Mean Absolute Difference (MAD) between the agent's and optimal actions. The agent earns a Step Reward only when 1 - MAD exceeds the red threshold line ($0.75$). Rewards gather internally as cumulative reward and are distributed to the return stack every `reward_every` steps.</i></p>
 </div>
 
 **SME-RL** provides highly configurable Synthetic Monitoring Environments for evaluating Deep Reinforcement Learning algorithms. Designed for rapid prototyping, sanity checking, and fundamental RL research, SME integrates natively with the [Gymnasium](https://gymnasium.farama.org/) API.
@@ -102,7 +102,14 @@ The evaluation function returns a tuple of four arrays:
 | `a` | Action predictions selected by your trained model. |
 | `raw_reward` | Normalized scores scaled between `0.0` and `1.0` indicating how tightly your model mirrors optimal actions. |
 
-evaluation metrics are written out as a compressed `.npz` file if the `storepath` parameter in the `eval()` method is specified.
+Evaluation metrics are written out as a compressed `.npz` file if the `storepath` parameter in the `eval()` method is specified.
+
+<div align="center">
+  <!-- 🖼️ PLACEHOLDER FOR YOUR FIGURE -->
+  <img src="docs/assets/eval.png" alt="SME-RL" width="600"/>
+  <p><i>Figure 1: Evaluation performance during training (column 1) and final within-distribution and out-of-distribution performance for PPO, SAC and TD3 across different complexities of the optimal policy the agent seeks to mirror (C_pi*, columns 2-4). Performance is defined as the complement of the mean average error between action and optimal action. States within $\mathbb{R}^2(0,1)$ are within-distribution. States beyond the unit square are out-of-distribution. SD = State Dimension.</i></p>
+</div>
+
 ## 📖 Citation
 If you use this environment in your research, please cite our paper:
 
